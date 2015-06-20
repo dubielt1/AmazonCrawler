@@ -8,15 +8,17 @@ from scrapy.utils.project import get_project_settings
 
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
+from scrapy.linkextractors.sgml import SgmlLinkExtractor
+
 
 from scrapy import optional_features
 # uncommented fixes my issue
 #optional_features.remove('boto')
 
 
-class amazonSpider(scrapy.Spider): #CrawlSpider
+class amazonSpider(CrawlSpider): #CrawlSpider
 	name = "amazon"
-	allowed_domains = ["amazon.com"]
+	allowed_domains = []#"amazon.com"]
 
 	base_url = "http://amazon.com/"
 
@@ -31,10 +33,10 @@ class amazonSpider(scrapy.Spider): #CrawlSpider
 	#start_urls.append(product_page)
 	start_urls.append(review_page)
 	
+	rules = (Rule (LinkExtractor(allow=(), restrict_xpaths=(".//*[@id='cm_cr-pagination_bar']/ul/li[last()]/a")), callback='parse_item', follow=True, ),)
 
 
-
-	def parse(self, response): #if CrawlSpider, change name (can't override parse())
+	def parse_item(self, response): #if CrawlSpider, change name (can't override parse())
 		items = []
 
 		item = AmazonItem()
@@ -47,9 +49,7 @@ class amazonSpider(scrapy.Spider): #CrawlSpider
 		temp = ''.join(temp) #Makes into a string
 
 		item['reviews'] = temp#re.sub(r'Comment', "\n\n", temp) #works when not in a list (e.g. items[])
-		#product = AmazonItem()
-		#product['title'] = response.xpath(".//*[@id='productTitle']").extract()
 
 		items.append(item)
 
-		print items
+		return items
