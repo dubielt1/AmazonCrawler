@@ -14,6 +14,9 @@ BOT_NAME = 'amazon'
 SPIDER_MODULES = ['amazon.spiders']
 NEWSPIDER_MODULE = 'amazon.spiders'
 
+ITEM_PIPELINES = {
+	'amazon.pipelines.AmazonPipeline': 100,
+}
 
 USER_AGENT="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10; rv:33.0) Gecko/20100101 Firefox/33.0"
 
